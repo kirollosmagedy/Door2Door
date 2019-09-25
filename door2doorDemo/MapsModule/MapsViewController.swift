@@ -54,7 +54,7 @@ class MapsViewController: UIViewController {
         viewModel.statusPublishRelay.subscribe(onNext: { (status) in
             switch status {
             case .droppedOff:
-                let alertViewController = UIAlertController(title: "Congratulations!", message: "your trip is completed successfully!", preferredStyle: .alert)
+                let alertViewController = UIAlertController(title: "Congratulations!", message: "your trip has completed successfully!", preferredStyle: .alert)
                 let okAction = UIAlertAction(title: "Ok", style: .default) { (action) in
                     alertViewController.dismiss(animated: true)
                 }
