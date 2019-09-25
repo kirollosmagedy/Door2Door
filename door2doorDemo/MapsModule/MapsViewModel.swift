@@ -14,12 +14,8 @@ import RxStarscream
 import Starscream
 import RxCocoa
 
-struct GMDirection {
-    
-}
-
 class MapsViewModel {
-    let statusPublishRelay = PublishRelay<String>()
+    let statusPublishRelay = PublishRelay<DoorPickupStatus>()
     let directionPublishSubject = PublishSubject<[GMRoute]>()
     let vechicalLocationPublishReplay = PublishRelay<DoorLocationModel>()
     
@@ -63,6 +59,11 @@ class MapsViewModel {
     
     func startMonitoringForLocation() {
         socket = WebSocket(url: URL(string: "wss://d2d-frontend-code-challenge.herokuapp.com")!)
+        
+        if socket.isConnected {
+            socket.disconnect()
+        }
+        
         socket.connect()
         socket.rx.response.subscribe(onNext: { [weak self] (response: WebSocketEvent) in
             switch response {
@@ -78,7 +79,7 @@ class MapsViewModel {
                         switch status {
                         case .bookingOpened:
                             self!.bookingOpenedModel = BookingOpenedModel(dic: responseDic ?? [:])
-                            self?.statusPublishRelay.accept(self!.bookingOpenedModel!.status ?? "")
+                            self?.statusPublishRelay.accept( DoorPickupStatus(rawValue: self!.bookingOpenedModel!.status ?? "") ?? DoorPickupStatus.waitingForPickup)
                             
                             self?.getDirections(startLocation: CLLocation(lat:
                                 self!.bookingOpenedModel!.vehicleLocation?.lat ?? 0, lng: self!.bookingOpenedModel!.vehicleLocation?.lng ?? 0),
@@ -105,7 +106,7 @@ class MapsViewModel {
                         case .statusUpdated:
                             let statusString = json?["data"] as? String ?? ""
                             let status = DoorPickupStatus(rawValue: statusString)
-                            self?.statusPublishRelay.accept(status?.rawValue ?? "")
+                            self?.statusPublishRelay.accept(status ?? DoorPickupStatus.waitingForPickup)
 
                             switch status {
                             case .waitingForPickup :

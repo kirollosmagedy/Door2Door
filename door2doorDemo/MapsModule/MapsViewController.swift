@@ -11,16 +11,23 @@ import GoogleMaps
 import RxSwift
 
 class MapsViewController: UIViewController {
-    var mapView: GMSMapView!
+    private var mapView: GMSMapView!
+    private let disposeBag = DisposeBag()
+    private let marker = GMSMarker()
+
     let viewModel = MapsViewModel()
-    let disposeBag = DisposeBag()
     @IBOutlet weak var statusLbl: UILabel!
     @IBOutlet weak var mapsContainerView: UIView!
-    let marker = GMSMarker()
+    @IBOutlet weak var startBtn: UIButton!
+    @IBOutlet weak var statusTitleLbl: UILabel!
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        let camera = GMSCameraPosition.camera(withLatitude: 40.4, longitude: 30.3, zoom: 10.0)
+        statusTitleLbl.isHidden = true
+        
+        //should be user current location
+        let camera = GMSCameraPosition.camera(withLatitude: 52.519061, longitude: 13.426789, zoom: 12.0)
+        
         mapView = GMSMapView.map(withFrame: mapsContainerView.frame, camera: camera)
         mapsContainerView.addSubview(mapView)
         mapView.topAnchor.constraint(equalTo: mapsContainerView.topAnchor).isActive = true
@@ -28,7 +35,12 @@ class MapsViewController: UIViewController {
         mapView.rightAnchor.constraint(equalTo: mapsContainerView.rightAnchor).isActive = true
         mapView.leftAnchor.constraint(equalTo: mapsContainerView.leftAnchor).isActive = true
 
-        viewModel.statusPublishRelay.asDriver(onErrorJustReturn: "").drive(self.statusLbl.rx.text).disposed(by: disposeBag)
+        viewModel.statusPublishRelay.do(onNext: { _ in
+            self.statusTitleLbl.isHidden = false
+        }).map({ (status) in
+            return status.rawValue
+        }).asDriver(onErrorJustReturn: "").drive(self.statusLbl.rx.text).disposed(by: disposeBag)
+        
         viewModel.directionPublishSubject.subscribe(onNext: { routes in
             self.mapView.drawLine(routes: routes)
         }, onError: { (error) in
@@ -38,12 +50,27 @@ class MapsViewController: UIViewController {
         viewModel.vechicalLocationPublishReplay.subscribe(onNext: { (location) in
             self.createCarMarker(lat: location.lat ?? 0.0, lng: location.lng ?? 0.0)
         }).disposed(by: self.disposeBag)
+        
+        viewModel.statusPublishRelay.subscribe(onNext: { (status) in
+            switch status {
+            case .droppedOff:
+                let alertViewController = UIAlertController(title: "Congratulations!", message: "your trip is completed successfully!", preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "Ok", style: .default) { (action) in
+                    alertViewController.dismiss(animated: true)
+                }
+                alertViewController.addAction(okAction)
+                self.present(alertViewController, animated: true)
+                self.enableStartBtn()
+            case .inVehicle:
+                break
+            case .waitingForPickup:
+                break
+                
+            }
+        }).disposed(by: self.disposeBag)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        viewModel.startMonitoringForLocation()
-
-    }
+   
     
     func createCarMarker(lat: Double, lng: Double) {
         marker.position = CLLocationCoordinate2D(latitude: lat, longitude: lng)
@@ -54,7 +81,20 @@ class MapsViewController: UIViewController {
         marker.iconView = imageView
         mapView.selectedMarker = marker
     }
+    
+    @IBAction func startPressed(_ sender: UIButton) {
+        disableStartBtn()
+        viewModel.startMonitoringForLocation()
+    }
+    
+    func disableStartBtn() {
+        self.startBtn.isUserInteractionEnabled = false
+        self.startBtn.setTitleColor(UIColor.gray, for: .normal)
+    }
+    
+    func enableStartBtn() {
+        self.startBtn.isUserInteractionEnabled = true
+        self.startBtn.setTitleColor(UIColor.black, for: .normal)
+    }
 }
-
-
 
