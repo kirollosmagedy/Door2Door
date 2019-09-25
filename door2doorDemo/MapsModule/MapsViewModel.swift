@@ -12,45 +12,51 @@ import Alamofire
 import RxSwift
 import RxStarscream
 import Starscream
+import RxCocoa
+
+struct GMDirection {
+    
+}
 
 class MapsViewModel {
-    let disposeBag = DisposeBag()
-    var socket: WebSocket!
+    let statusPublishRelay = PublishRelay<String>()
+    let directionPublishSubject = PublishSubject<[GMRoute]>()
+    let vechicalLocationPublishReplay = PublishRelay<DoorLocationModel>()
     
-    func getDirections(startLocation: CLLocation, destinationLocation: CLLocation, intermediatePoints: [CLLocationCoordinate2D]?) -> Observable<[GMRoute]> {
-        return Observable.create { (observer) -> Disposable in
-            let origin = "\(startLocation.coordinate.latitude),\(startLocation.coordinate.longitude)"
-            let destination = "\(destinationLocation.coordinate.latitude),\(destinationLocation.coordinate.longitude)"
-            var wayPoints = ""
-            
-            for point in intermediatePoints ?? [] {
-                wayPoints = wayPoints.count == 0 ? "\(point.latitude),\(point.longitude)" : "\(wayPoints)%7C\(point.latitude),\(point.longitude)"
-            }
-            
-            let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(origin)&destination=\(destination)&mode=driving&waypoints=\(wayPoints)&key=\(AppConstants.googleApiKey)"
-
-           
-            let response = Alamofire.request(URL(string: urlString)!, method: .get, parameters: nil, encoding: JSONEncoding.default , headers: nil)
-            response.responseJSON { (googleData) in
-                if let data = googleData.data {
-                    if let googleResponse = try? JSONDecoder().decode(GMBaseResponse.self, from: data) {
-                        print("😎 reterived google response successfuly")
-                        observer.onNext(googleResponse.routes ?? [])
-                    } else {
-                        // throw error google data could not be parsed
-                        print("😱 could not parse google response")
-                        observer.onError(BaseError.parsingFailed)
-                    }
-                } else {
-                    // throw error data is empty
-                    print("😱 could not parse data is empty")
-                    observer.onError(BaseError.emptyData)
-
-                }
-                
-            }
-            return Disposables.create()
+    private let disposeBag = DisposeBag()
+    private var socket: WebSocket!
+    
+    func getDirections(startLocation: CLLocation, destinationLocation: CLLocation, intermediatePoints: [CLLocationCoordinate2D]?) {
+        let origin = "\(startLocation.coordinate.latitude),\(startLocation.coordinate.longitude)"
+        let destination = "\(destinationLocation.coordinate.latitude),\(destinationLocation.coordinate.longitude)"
+        var wayPoints = ""
+        
+        for point in intermediatePoints ?? [] {
+            wayPoints = wayPoints.count == 0 ? "\(point.latitude),\(point.longitude)" : "\(wayPoints)%7C\(point.latitude),\(point.longitude)"
         }
+        
+        let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(origin)&destination=\(destination)&mode=driving&waypoints=\(wayPoints)&key=\(AppConstants.googleApiKey)"
+        
+        
+        let response = Alamofire.request(URL(string: urlString)!, method: .get, parameters: nil, encoding: JSONEncoding.default , headers: nil)
+        response.responseJSON { (googleData) in
+            if let data = googleData.data {
+                if let googleResponse = try? JSONDecoder().decode(GMBaseResponse.self, from: data) {
+                    print("😎 reterived google response successfuly")
+                    self.directionPublishSubject.onNext(googleResponse.routes ?? [])
+                } else {
+                    // throw error google data could not be parsed
+                    print("😱 could not parse google response")
+                    self.directionPublishSubject.onError(BaseError.parsingFailed)
+                }
+            } else {
+                // throw error data is empty
+                print("😱 could not parse data is empty")
+                self.directionPublishSubject.onError(BaseError.emptyData)
+            }
+            
+        }
+        
     }
     
     func startMonitoringForLocation() {
@@ -70,13 +76,20 @@ class MapsViewModel {
                         switch status {
                         case .bookingOpened:
                             let bookingOpenedModel = BookingOpenedModel(dic: responseDic ?? [:])
+                            self?.statusPublishRelay.accept(bookingOpenedModel.status ?? "")
+                            
+                            self?.getDirections(startLocation: CLLocation(lat:
+                                bookingOpenedModel.vehicleLocation?.lat ?? 0, lng: bookingOpenedModel.vehicleLocation?.lng ?? 0),
+                                                       destinationLocation: CLLocation(lat: bookingOpenedModel.pickupLocation?.lat ?? 0, lng: bookingOpenedModel.pickupLocation?.lng ?? 0), intermediatePoints: [])
                             
                         case .intermediateStopLocationsChanged:
-                            break
+                          break
+                            
                         case .statusUpdated:
                             break
                         case .vehicleLocationUpdated:
-                            break
+                            let vechicleLocation = DoorLocationModel(dic: responseDic ?? [:])
+                            self?.vechicalLocationPublishReplay.accept(vechicleLocation)
                         case .bookingClosed:
                             self?.socket.disconnect()
                         }

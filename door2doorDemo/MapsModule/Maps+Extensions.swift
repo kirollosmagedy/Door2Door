@@ -9,7 +9,7 @@
 import MapKit
 import GoogleMaps
 extension CLLocation {
-    convenience init(lat: Float, lng: Float) {
+    convenience init(lat: Double, lng: Double) {
         self.init(latitude: CLLocationDegrees(exactly: lat)!, longitude: CLLocationDegrees(exactly: lng)!)
     }
 }
