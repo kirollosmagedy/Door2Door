@@ -32,9 +32,8 @@ class MapsViewController: UIViewController {
         viewModel.directionPublishSubject.subscribe(onNext: { routes in
             self.mapView.drawLine(routes: routes)
         }, onError: { (error) in
-            
+            //check for internet connection or show blocking error thrown from google api
         }).disposed(by: disposeBag)
-        
         
         viewModel.vechicalLocationPublishReplay.subscribe(onNext: { (location) in
             self.createCarMarker(lat: location.lat ?? 0.0, lng: location.lng ?? 0.0)
@@ -47,7 +46,6 @@ class MapsViewController: UIViewController {
     }
     
     func createCarMarker(lat: Double, lng: Double) {
-        // Creates a marker in the center of the map.
         marker.position = CLLocationCoordinate2D(latitude: lat, longitude: lng)
         marker.map = mapView
         let markerImage = UIImage(imageLiteralResourceName: "google-maps-car-icon")

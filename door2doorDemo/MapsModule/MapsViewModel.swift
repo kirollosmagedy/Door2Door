@@ -25,6 +25,8 @@ class MapsViewModel {
     
     private let disposeBag = DisposeBag()
     private var socket: WebSocket!
+    private var bookingOpenedModel: BookingOpenedModel?
+    private var currentVechileLocation: DoorLocationModel?
     
     func getDirections(startLocation: CLLocation, destinationLocation: CLLocation, intermediatePoints: [CLLocationCoordinate2D]?) {
         let origin = "\(startLocation.coordinate.latitude),\(startLocation.coordinate.longitude)"
@@ -75,20 +77,55 @@ class MapsViewModel {
                         let responseDic = json?["data"] as? [String: Any]
                         switch status {
                         case .bookingOpened:
-                            let bookingOpenedModel = BookingOpenedModel(dic: responseDic ?? [:])
-                            self?.statusPublishRelay.accept(bookingOpenedModel.status ?? "")
+                            self!.bookingOpenedModel = BookingOpenedModel(dic: responseDic ?? [:])
+                            self?.statusPublishRelay.accept(self!.bookingOpenedModel!.status ?? "")
                             
                             self?.getDirections(startLocation: CLLocation(lat:
-                                bookingOpenedModel.vehicleLocation?.lat ?? 0, lng: bookingOpenedModel.vehicleLocation?.lng ?? 0),
-                                                       destinationLocation: CLLocation(lat: bookingOpenedModel.pickupLocation?.lat ?? 0, lng: bookingOpenedModel.pickupLocation?.lng ?? 0), intermediatePoints: [])
+                                self!.bookingOpenedModel!.vehicleLocation?.lat ?? 0, lng: self!.bookingOpenedModel!.vehicleLocation?.lng ?? 0),
+                                                destinationLocation: CLLocation(lat: self!.bookingOpenedModel!.pickupLocation?.lat ?? 0, lng: self!.bookingOpenedModel!.pickupLocation?.lng ?? 0), intermediatePoints: [])
                             
                         case .intermediateStopLocationsChanged:
-                          break
+                            
+                            let intermediatePointsDic = json?["data"] as? [[String: Any]]
+                            var intermediateStopLocations = [DoorLocationModel]()
+
+                            for point in intermediatePointsDic ?? [] {
+                                intermediateStopLocations.append(DoorLocationModel(dic: point))
+                            }
+                            
+                            var wayPoints = [CLLocationCoordinate2D]()
+                            for intermediateLocation in intermediateStopLocations {
+                                wayPoints.append(CLLocationCoordinate2D(latitude: intermediateLocation.lat ?? 0, longitude: intermediateLocation.lng ?? 0))
+                            }
+                            
+                            self?.getDirections(startLocation: CLLocation(lat:
+                                self!.currentVechileLocation?.lat ?? 0, lng: self!.currentVechileLocation?.lng ?? 0),
+                                                destinationLocation: CLLocation(lat: self!.bookingOpenedModel!.dropoffLocation?.lat ?? 0, lng: self!.bookingOpenedModel!.dropoffLocation?.lng ?? 0), intermediatePoints: wayPoints)
                             
                         case .statusUpdated:
-                            break
+                            let statusString = json?["data"] as? String ?? ""
+                            let status = DoorPickupStatus(rawValue: statusString)
+                            self?.statusPublishRelay.accept(status?.rawValue ?? "")
+
+                            switch status {
+                            case .waitingForPickup :
+                                break
+                            case .inVehicle :
+                                var wayPoints = [CLLocationCoordinate2D]()
+                                for intermediateLocation in self!.bookingOpenedModel?.intermediateStopLocations! ?? [] {
+                                    wayPoints.append(CLLocationCoordinate2D(latitude: intermediateLocation.lat ?? 0, longitude: intermediateLocation.lng ?? 0))
+                                }
+                                self?.getDirections(startLocation: CLLocation(lat:
+                                    self!.bookingOpenedModel!.pickupLocation?.lat ?? 0, lng: self!.bookingOpenedModel!.pickupLocation?.lng ?? 0),
+                                                    destinationLocation: CLLocation(lat: self!.bookingOpenedModel!.dropoffLocation?.lat ?? 0, lng: self!.bookingOpenedModel!.dropoffLocation?.lng ?? 0), intermediatePoints: wayPoints)
+                            case .droppedOff :
+                                break
+                            case .none:
+                                break
+                            }
                         case .vehicleLocationUpdated:
                             let vechicleLocation = DoorLocationModel(dic: responseDic ?? [:])
+                            self!.currentVechileLocation = vechicleLocation
                             self?.vechicalLocationPublishReplay.accept(vechicleLocation)
                         case .bookingClosed:
                             self?.socket.disconnect()
@@ -111,3 +148,9 @@ enum BaseError: Error {
     case emptyData
 }
 
+
+enum DoorPickupStatus: String {
+    case waitingForPickup = "waitingForPickup"
+    case inVehicle = "inVehicle"
+    case droppedOff = "droppedOff"
+}
