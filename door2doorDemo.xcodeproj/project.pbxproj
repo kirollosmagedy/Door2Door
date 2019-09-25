@@ -14,8 +14,6 @@
 		480EC7E6233A65E00060E5C9 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480EC7E5233A65E00060E5C9 /* AppConstants.swift */; };
 		480EC7E8233A7DCE0060E5C9 /* GMRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480EC7E7233A7DCE0060E5C9 /* GMRoute.swift */; };
 		480EC7EB233A7E230060E5C9 /* BookingOpenedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480EC7EA233A7E230060E5C9 /* BookingOpenedModel.swift */; };
-		480EC7ED233A7E3C0060E5C9 /* VehicleLocationUpdatedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480EC7EC233A7E3C0060E5C9 /* VehicleLocationUpdatedModel.swift */; };
-		480EC7EF233A7E600060E5C9 /* IntermediateStopLocationsChangedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480EC7EE233A7E600060E5C9 /* IntermediateStopLocationsChangedModel.swift */; };
 		480EC7F1233A7E740060E5C9 /* DoorLocationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480EC7F0233A7E740060E5C9 /* DoorLocationModel.swift */; };
 		480EC7F3233A7E900060E5C9 /* DDoorStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480EC7F2233A7E900060E5C9 /* DDoorStatus.swift */; };
 		48444FF723379B0900998D54 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48444FF623379B0900998D54 /* AppDelegate.swift */; };
@@ -44,8 +42,6 @@
 		480EC7E5233A65E00060E5C9 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		480EC7E7233A7DCE0060E5C9 /* GMRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GMRoute.swift; sourceTree = "<group>"; };
 		480EC7EA233A7E230060E5C9 /* BookingOpenedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingOpenedModel.swift; sourceTree = "<group>"; };
-		480EC7EC233A7E3C0060E5C9 /* VehicleLocationUpdatedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleLocationUpdatedModel.swift; sourceTree = "<group>"; };
-		480EC7EE233A7E600060E5C9 /* IntermediateStopLocationsChangedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntermediateStopLocationsChangedModel.swift; sourceTree = "<group>"; };
 		480EC7F0233A7E740060E5C9 /* DoorLocationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoorLocationModel.swift; sourceTree = "<group>"; };
 		480EC7F2233A7E900060E5C9 /* DDoorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDoorStatus.swift; sourceTree = "<group>"; };
 		48444FF323379B0900998D54 /* door2doorDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = door2doorDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,8 +130,6 @@
 			isa = PBXGroup;
 			children = (
 				480EC7EA233A7E230060E5C9 /* BookingOpenedModel.swift */,
-				480EC7EC233A7E3C0060E5C9 /* VehicleLocationUpdatedModel.swift */,
-				480EC7EE233A7E600060E5C9 /* IntermediateStopLocationsChangedModel.swift */,
 				480EC7F0233A7E740060E5C9 /* DoorLocationModel.swift */,
 				480EC7F2233A7E900060E5C9 /* DDoorStatus.swift */,
 			);
@@ -396,13 +390,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				480EC7EF233A7E600060E5C9 /* IntermediateStopLocationsChangedModel.swift in Sources */,
 				480EC7EB233A7E230060E5C9 /* BookingOpenedModel.swift in Sources */,
 				480EC7DE233A5ED90060E5C9 /* Maps+Extensions.swift in Sources */,
 				480EC7E6233A65E00060E5C9 /* AppConstants.swift in Sources */,
 				480EC7F3233A7E900060E5C9 /* DDoorStatus.swift in Sources */,
 				480EC7DC233A5EBC0060E5C9 /* MapsViewModel.swift in Sources */,
-				480EC7ED233A7E3C0060E5C9 /* VehicleLocationUpdatedModel.swift in Sources */,
 				48444FF923379B0900998D54 /* MapsViewController.swift in Sources */,
 				48444FF723379B0900998D54 /* AppDelegate.swift in Sources */,
 				480EC7E8233A7DCE0060E5C9 /* GMRoute.swift in Sources */,
