@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  door2doorDemo
 //
-//  Created by Kiro on 9/22/19.
-//  Copyright © 2019 Kiro. All rights reserved.
+//  Created by Fady on 9/22/19.
+//  Copyright © 2019 Fady. All rights reserved.
 //
 
 import UIKit
