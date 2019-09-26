@@ -89,12 +89,12 @@ class MapsViewController: UIViewController {
     
     func disableStartBtn() {
         self.startBtn.isUserInteractionEnabled = false
-        self.startBtn.setTitleColor(UIColor.gray, for: .normal)
+        self.startBtn.backgroundColor = UIColor.gray
     }
     
     func enableStartBtn() {
         self.startBtn.isUserInteractionEnabled = true
-        self.startBtn.setTitleColor(UIColor.black, for: .normal)
+        self.startBtn.backgroundColor = UIColor.black
     }
 }
 
