@@ -21,7 +21,7 @@ class MapsViewModel {
     
     private let disposeBag = DisposeBag()
     private var socket: WebSocket!
-    private var bookingOpenedModel: BookingOpenedModel?
+    var bookingOpenedModel: BehaviorRelay<BookingOpenedModel?> = BehaviorRelay(value: nil)
     private var currentVechileLocation: DoorLocationModel?
     
     func getDirections(startLocation: CLLocation, destinationLocation: CLLocation, intermediatePoints: [CLLocationCoordinate2D]?) {
@@ -83,12 +83,12 @@ class MapsViewModel {
                         let responseDic = json?["data"] as? [String: Any]
                         switch status {
                         case .bookingOpened:
-                            self!.bookingOpenedModel = BookingOpenedModel(dic: responseDic ?? [:])
-                            self?.statusPublishRelay.accept( DoorPickupStatus(rawValue: self!.bookingOpenedModel!.status ?? "") ?? DoorPickupStatus.waitingForPickup)
+                            self!.bookingOpenedModel.accept( BookingOpenedModel(dic: responseDic ?? [:]))
+                            self?.statusPublishRelay.accept( DoorPickupStatus(rawValue: self!.bookingOpenedModel.value!.status ?? "") ?? DoorPickupStatus.waitingForPickup)
                             
                             self?.getDirections(startLocation: CLLocation(lat:
-                                self!.bookingOpenedModel!.vehicleLocation?.lat ?? 0, lng: self!.bookingOpenedModel!.vehicleLocation?.lng ?? 0),
-                                                destinationLocation: CLLocation(lat: self!.bookingOpenedModel!.pickupLocation?.lat ?? 0, lng: self!.bookingOpenedModel!.pickupLocation?.lng ?? 0), intermediatePoints: [])
+                                self!.bookingOpenedModel.value!.vehicleLocation?.lat ?? 0, lng: self!.bookingOpenedModel.value!.vehicleLocation?.lng ?? 0),
+                                                destinationLocation: CLLocation(lat: self!.bookingOpenedModel.value!.pickupLocation?.lat ?? 0, lng: self!.bookingOpenedModel.value!.pickupLocation?.lng ?? 0), intermediatePoints: [])
                             
                         case .intermediateStopLocationsChanged:
                             
@@ -106,7 +106,7 @@ class MapsViewModel {
                             
                             self?.getDirections(startLocation: CLLocation(lat:
                                 self!.currentVechileLocation?.lat ?? 0, lng: self!.currentVechileLocation?.lng ?? 0),
-                                                destinationLocation: CLLocation(lat: self!.bookingOpenedModel!.dropoffLocation?.lat ?? 0, lng: self!.bookingOpenedModel!.dropoffLocation?.lng ?? 0), intermediatePoints: wayPoints)
+                                                destinationLocation: CLLocation(lat: self!.bookingOpenedModel.value!.dropoffLocation?.lat ?? 0, lng: self!.bookingOpenedModel.value!.dropoffLocation?.lng ?? 0), intermediatePoints: wayPoints)
                             
                         case .statusUpdated:
                             let statusString = json?["data"] as? String ?? ""
@@ -118,12 +118,12 @@ class MapsViewModel {
                                 break
                             case .inVehicle :
                                 var wayPoints = [CLLocationCoordinate2D]()
-                                for intermediateLocation in self!.bookingOpenedModel?.intermediateStopLocations! ?? [] {
+                                for intermediateLocation in self!.bookingOpenedModel.value?.intermediateStopLocations! ?? [] {
                                     wayPoints.append(CLLocationCoordinate2D(latitude: intermediateLocation.lat ?? 0, longitude: intermediateLocation.lng ?? 0))
                                 }
                                 self?.getDirections(startLocation: CLLocation(lat:
-                                    self!.bookingOpenedModel!.pickupLocation?.lat ?? 0, lng: self!.bookingOpenedModel!.pickupLocation?.lng ?? 0),
-                                                    destinationLocation: CLLocation(lat: self!.bookingOpenedModel!.dropoffLocation?.lat ?? 0, lng: self!.bookingOpenedModel!.dropoffLocation?.lng ?? 0), intermediatePoints: wayPoints)
+                                    self!.bookingOpenedModel.value!.pickupLocation?.lat ?? 0, lng: self!.bookingOpenedModel.value!.pickupLocation?.lng ?? 0),
+                                                    destinationLocation: CLLocation(lat: self!.bookingOpenedModel.value!.dropoffLocation?.lat ?? 0, lng: self!.bookingOpenedModel.value!.dropoffLocation?.lng ?? 0), intermediatePoints: wayPoints)
                             case .droppedOff :
                                 break
                             case .none:

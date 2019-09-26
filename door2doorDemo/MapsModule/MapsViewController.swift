@@ -50,11 +50,22 @@ class MapsViewController: UIViewController {
             return  status == .unknown ? "" : status.rawValue
         }).asDriver(onErrorJustReturn: "").drive(self.statusLbl.rx.text).disposed(by: disposeBag)
         
-        viewModel.directionPublishSubject.subscribe(onNext: { routes in
-            self.mapView.drawLine(routes: routes)
-        }, onError: { (error) in
-            
-        }).disposed(by: disposeBag)
+        viewModel.directionPublishSubject
+            .subscribe(onNext: { routes in
+                self.mapView.drawLine(routes: routes)
+                guard let location = self.viewModel.bookingOpenedModel.value else { return }
+                switch self.viewModel.statusPublishRelay.value {
+                case .inVehicle:
+                    self.createMarker(lat: location.dropoffLocation?.lat ?? 0, lng: location.dropoffLocation?.lng ?? 0)
+                case .waitingForPickup:
+                    self.createMarker(lat: location.pickupLocation?.lat ?? 0, lng: location.pickupLocation?.lng ?? 0)
+                default:
+                    break
+                }
+                
+            }, onError: { (error) in
+                
+            }).disposed(by: disposeBag)
         
         viewModel.vechicalLocationPublishReplay.subscribe(onNext: { (location) in
             self.createCarMarker(lat: location.lat ?? 0.0, lng: location.lng ?? 0.0)
@@ -93,7 +104,12 @@ class MapsViewController: UIViewController {
         marker.iconView = imageView
         mapView.selectedMarker = marker
     }
-    
+    func createMarker(lat: Double, lng: Double) {
+        let directionMarker = GMSMarker()
+        directionMarker.position = CLLocationCoordinate2D(latitude: lat, longitude: lng)
+        directionMarker.map = mapView
+
+    }
     @IBAction func startPressed(_ sender: UIButton) {
         self.startBtn.isHidden = true
         viewModel.startMonitoringForLocation()
