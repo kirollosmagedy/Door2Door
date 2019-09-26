@@ -45,7 +45,8 @@ class MapsViewController: UIViewController {
         viewModel.directionPublishSubject.subscribe(onNext: { routes in
             self.mapView.drawLine(routes: routes)
         }, onError: { (error) in
-            //check for internet connection or show blocking error thrown from google api
+            self.viewModel.disconnect()
+            self.startBtn.isHidden = false
         }).disposed(by: disposeBag)
         
         viewModel.vechicalLocationPublishReplay.subscribe(onNext: { (location) in
@@ -62,12 +63,12 @@ class MapsViewController: UIViewController {
                 alertViewController.addAction(okAction)
                 self.present(alertViewController, animated: true)
                 self.startBtn.isHidden = false
+                self.cancelBtn.isHidden = true
             case .inVehicle:
-                self.cancelBtn.disableButton()
+                self.startBtn.isHidden = true
+                self.cancelBtn.isHidden = true
             case .waitingForPickup:
                 self.cancelBtn.isHidden = false
-                self.cancelBtn.enableButton()
-                
             }
         }).disposed(by: self.disposeBag)
     }

@@ -22,7 +22,6 @@
 		48444FFE23379B0A00998D54 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 48444FFD23379B0A00998D54 /* Assets.xcassets */; };
 		4844500123379B0A00998D54 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48444FFF23379B0A00998D54 /* LaunchScreen.storyboard */; };
 		4844500C23379B0A00998D54 /* door2doorDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4844500B23379B0A00998D54 /* door2doorDemoTests.swift */; };
-		48C7A016233CC0AB00F6BB85 /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C7A015233CC0AB00F6BB85 /* UIButton+Extension.swift */; };
 		58DD7BC9FFFC414F51A0E81F /* Pods_door2doorDemoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517D4689B4D3453465DB3C69 /* Pods_door2doorDemoTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -55,7 +54,6 @@
 		4844500723379B0A00998D54 /* door2doorDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = door2doorDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4844500B23379B0A00998D54 /* door2doorDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = door2doorDemoTests.swift; sourceTree = "<group>"; };
 		4844500D23379B0A00998D54 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		48C7A015233CC0AB00F6BB85 /* UIButton+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
 		517D4689B4D3453465DB3C69 /* Pods_door2doorDemoTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_door2doorDemoTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6AF70F7AAC6399E3458AE819 /* Pods-door2doorDemoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-door2doorDemoTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-door2doorDemoTests/Pods-door2doorDemoTests.release.xcconfig"; sourceTree = "<group>"; };
 		767333D0CAA3766E07E5F749 /* Pods_door2doorDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_door2doorDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -115,7 +113,6 @@
 				480EC7DD233A5ED90060E5C9 /* Maps+Extensions.swift */,
 				48444FFA23379B0900998D54 /* Main.storyboard */,
 				480EC7E5233A65E00060E5C9 /* AppConstants.swift */,
-				48C7A015233CC0AB00F6BB85 /* UIButton+Extension.swift */,
 			);
 			path = MapsModule;
 			sourceTree = "<group>";
@@ -396,7 +393,6 @@
 				480EC7EB233A7E230060E5C9 /* BookingOpenedModel.swift in Sources */,
 				480EC7DE233A5ED90060E5C9 /* Maps+Extensions.swift in Sources */,
 				480EC7E6233A65E00060E5C9 /* AppConstants.swift in Sources */,
-				48C7A016233CC0AB00F6BB85 /* UIButton+Extension.swift in Sources */,
 				480EC7F3233A7E900060E5C9 /* DDoorStatus.swift in Sources */,
 				480EC7DC233A5EBC0060E5C9 /* MapsViewModel.swift in Sources */,
 				48444FF923379B0900998D54 /* MapsViewController.swift in Sources */,

@@ -65,7 +65,7 @@ class MapsViewModel {
         }
         
         socket.connect()
-        socket.rx.response.subscribe(onNext: { [weak self] (response: WebSocketEvent) in
+        (socket.rx.response.subscribe(onNext: { [weak self] (response: WebSocketEvent) in
             switch response {
             case .connected:
                 print("Connected")
@@ -89,7 +89,7 @@ class MapsViewModel {
                             
                             let intermediatePointsDic = json?["data"] as? [[String: Any]]
                             var intermediateStopLocations = [DoorLocationModel]()
-
+                            
                             for point in intermediatePointsDic ?? [] {
                                 intermediateStopLocations.append(DoorLocationModel(dic: point))
                             }
@@ -107,7 +107,7 @@ class MapsViewModel {
                             let statusString = json?["data"] as? String ?? ""
                             let status = DoorPickupStatus(rawValue: statusString)
                             self?.statusPublishRelay.accept(status ?? DoorPickupStatus.waitingForPickup)
-
+                            
                             switch status {
                             case .waitingForPickup :
                                 break
@@ -138,7 +138,7 @@ class MapsViewModel {
             case .pong:
                 break
             }
-        }).disposed(by: disposeBag)
+        })).disposed(by: disposeBag)
 
     }
     
