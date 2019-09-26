@@ -93,10 +93,14 @@ class MapsViewController: UIViewController {
     @IBAction func cancelPressed(_ sender: UIButton) {
         let camera = GMSCameraPosition.camera(withLatitude: 52.519061, longitude: 13.426789, zoom: 12.0)
         mapView.camera = camera
-        mapView.clear()
         viewModel.disconnect()
         startBtn.isHidden = false
         cancelBtn.isHidden = true
+        mapView.clear()
+        statusLbl.text = "Cancelled"
+        
+    
+
         
     }
     
