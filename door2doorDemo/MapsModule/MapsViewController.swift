@@ -12,7 +12,7 @@ import RxSwift
 
 class MapsViewController: UIViewController {
     private var mapView: GMSMapView!
-    private let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
     private let marker = GMSMarker()
 
     let viewModel = MapsViewModel()
@@ -38,15 +38,22 @@ class MapsViewController: UIViewController {
 
         viewModel.statusPublishRelay.do(onNext: { _ in
             self.statusTitleLbl.isHidden = false
+        }).do(onNext: { (status) in
+            if status == .unknown {
+                self.statusTitleLbl.isHidden = true
+            } else {
+                self.statusTitleLbl.isHidden = false
+
+            }
         }).map({ (status) in
-            return status.rawValue
+            
+            return  status == .unknown ? "" : status.rawValue
         }).asDriver(onErrorJustReturn: "").drive(self.statusLbl.rx.text).disposed(by: disposeBag)
         
         viewModel.directionPublishSubject.subscribe(onNext: { routes in
             self.mapView.drawLine(routes: routes)
         }, onError: { (error) in
-            self.viewModel.disconnect()
-            self.startBtn.isHidden = false
+            
         }).disposed(by: disposeBag)
         
         viewModel.vechicalLocationPublishReplay.subscribe(onNext: { (location) in
@@ -69,6 +76,8 @@ class MapsViewController: UIViewController {
                 self.cancelBtn.isHidden = true
             case .waitingForPickup:
                 self.cancelBtn.isHidden = false
+            case .unknown:
+                self.resetMap()
             }
         }).disposed(by: self.disposeBag)
     }
@@ -90,19 +99,20 @@ class MapsViewController: UIViewController {
         viewModel.startMonitoringForLocation()
     }
     
-    @IBAction func cancelPressed(_ sender: UIButton) {
+    fileprivate func resetMap() {
         let camera = GMSCameraPosition.camera(withLatitude: 52.519061, longitude: 13.426789, zoom: 12.0)
         mapView.camera = camera
         viewModel.disconnect()
-        startBtn.isHidden = false
         cancelBtn.isHidden = true
+        startBtn.isHidden = false
         mapView.clear()
-        statusLbl.text = "Cancelled"
         
-    
-
         
     }
     
+    @IBAction func cancelPressed(_ sender: UIButton) {
+        statusLbl.text = "Cancelled"
+        resetMap()
+    }
+    
 }
-

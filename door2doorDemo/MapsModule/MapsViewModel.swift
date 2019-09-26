@@ -15,7 +15,7 @@ import Starscream
 import RxCocoa
 
 class MapsViewModel {
-    let statusPublishRelay = PublishRelay<DoorPickupStatus>()
+    let statusPublishRelay = BehaviorRelay<DoorPickupStatus>(value: .unknown)
     let directionPublishSubject = PublishSubject<[GMRoute]>()
     let vechicalLocationPublishReplay = PublishRelay<DoorLocationModel>()
     
@@ -38,6 +38,10 @@ class MapsViewModel {
         
         let response = Alamofire.request(URL(string: urlString)!, method: .get, parameters: nil, encoding: JSONEncoding.default , headers: nil)
         response.responseJSON { (googleData) in
+            guard googleData.error == nil else {
+                self.directionPublishSubject.onError(googleData.error!)
+                return
+            }
             if let data = googleData.data {
                 if let googleResponse = try? JSONDecoder().decode(GMBaseResponse.self, from: data) {
                     print("😎 reterived google response successfuly")
@@ -50,10 +54,11 @@ class MapsViewModel {
             } else {
                 // throw error data is empty
                 print("😱 could not parse data is empty")
-                self.directionPublishSubject.onError(BaseError.emptyData)
             }
             
+            
         }
+        
         
     }
     
@@ -70,7 +75,7 @@ class MapsViewModel {
             case .connected:
                 print("Connected")
             case .disconnected(let error):
-                print("Disconnected with optional error : \(error)")
+                self?.statusPublishRelay.accept(DoorPickupStatus.unknown)
             case .message(let msg):
                 let data = msg.data(using: .utf8)
                 if let data = data , let json = try? JSONSerialization.jsonObject(with: data, options:[]) as? [String: Any] {
@@ -123,6 +128,8 @@ class MapsViewModel {
                                 break
                             case .none:
                                 break
+                            case .unknown:
+                                break
                             }
                         case .vehicleLocationUpdated:
                             let vechicleLocation = DoorLocationModel(dic: responseDic ?? [:])
@@ -138,12 +145,17 @@ class MapsViewModel {
             case .pong:
                 break
             }
+            },onError: {
+                error in
+                if self.statusPublishRelay.value == .unknown {
+                    self.directionPublishSubject.onError(error)
+                }
         })).disposed(by: disposeBag)
 
     }
     
     func disconnect() {
-        self.socket.disconnect()
+        self.socket?.disconnect()
     }
     
 }
@@ -155,6 +167,7 @@ enum BaseError: Error {
 
 
 enum DoorPickupStatus: String {
+    case unknown
     case waitingForPickup = "waitingForPickup"
     case inVehicle = "inVehicle"
     case droppedOff = "droppedOff"
