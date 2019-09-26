@@ -37,35 +37,56 @@
                                     </label>
                                 </subviews>
                             </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QZY-sw-xHT">
-                                <rect key="frame" x="124" y="767" width="166" height="45"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="bottom" spacing="17" translatesAutoresizingMaskIntoConstraints="NO" id="g6p-8u-JWU">
+                                <rect key="frame" x="124" y="739" width="166" height="107"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QZY-sw-xHT">
+                                        <rect key="frame" x="0.0" y="0.0" width="166" height="45"/>
+                                        <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="45" id="74T-PW-mIg"/>
+                                        </constraints>
+                                        <state key="normal" title="Request a Vehicle">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="startPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dL1-EL-ayf"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="fill" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Fo-BC-3Xm">
+                                        <rect key="frame" x="0.0" y="62" width="166" height="45"/>
+                                        <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <state key="normal" title="Cancel Request">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="cancelPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="l78-np-jyJ"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="45" id="74T-PW-mIg"/>
+                                    <constraint firstItem="5Fo-BC-3Xm" firstAttribute="width" secondItem="QZY-sw-xHT" secondAttribute="width" id="FOi-Jc-NBC"/>
+                                    <constraint firstItem="5Fo-BC-3Xm" firstAttribute="height" secondItem="QZY-sw-xHT" secondAttribute="height" id="kMM-dt-KHv"/>
                                 </constraints>
-                                <state key="normal" title="Start your trip">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <connections>
-                                    <action selector="startPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dL1-EL-ayf"/>
-                                </connections>
-                            </button>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="g6p-8u-JWU" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7Bc-Xt-rwH"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="odL-sp-DEi" secondAttribute="bottom" id="Dn0-aE-Pa1"/>
+                            <constraint firstItem="QZY-sw-xHT" firstAttribute="width" secondItem="odL-sp-DEi" secondAttribute="width" multiplier="0.4" id="HWS-eH-mJX"/>
                             <constraint firstItem="odL-sp-DEi" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="NLF-uW-WFj"/>
                             <constraint firstItem="odL-sp-DEi" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="VLq-uR-HeI"/>
                             <constraint firstItem="u07-xT-xHh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="10" id="YsI-we-cqh"/>
                             <constraint firstItem="u07-xT-xHh" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="fBs-xZ-8TK"/>
-                            <constraint firstItem="QZY-sw-xHT" firstAttribute="width" secondItem="odL-sp-DEi" secondAttribute="width" multiplier="0.4" id="o9m-YX-4sm"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="QZY-sw-xHT" secondAttribute="bottom" constant="50" id="tdr-jh-Idr"/>
+                            <constraint firstAttribute="bottom" secondItem="g6p-8u-JWU" secondAttribute="bottom" constant="50" id="t1z-Y5-RHg"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="odL-sp-DEi" secondAttribute="trailing" id="vfJ-bO-DbA"/>
-                            <constraint firstItem="QZY-sw-xHT" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="zwt-Cv-Nxr"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="cancelBtn" destination="5Fo-BC-3Xm" id="p7L-9H-rR8"/>
                         <outlet property="mapsContainerView" destination="odL-sp-DEi" id="Mmg-xt-Q4v"/>
                         <outlet property="startBtn" destination="QZY-sw-xHT" id="nYv-5v-k6p"/>
                         <outlet property="statusLbl" destination="KQ7-GQ-bwF" id="PqI-ol-d60"/>

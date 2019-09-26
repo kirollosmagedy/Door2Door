@@ -142,6 +142,10 @@ class MapsViewModel {
 
     }
     
+    func disconnect() {
+        self.socket.disconnect()
+    }
+    
 }
 
 enum BaseError: Error {

@@ -19,6 +19,7 @@ class MapsViewController: UIViewController {
     @IBOutlet weak var statusLbl: UILabel!
     @IBOutlet weak var mapsContainerView: UIView!
     @IBOutlet weak var startBtn: UIButton!
+    @IBOutlet weak var cancelBtn: UIButton!
     @IBOutlet weak var statusTitleLbl: UILabel!
     override func viewDidLoad() {
         
@@ -27,13 +28,13 @@ class MapsViewController: UIViewController {
         
         //should be user current location
         let camera = GMSCameraPosition.camera(withLatitude: 52.519061, longitude: 13.426789, zoom: 12.0)
-        
         mapView = GMSMapView.map(withFrame: mapsContainerView.frame, camera: camera)
         mapsContainerView.addSubview(mapView)
         mapView.topAnchor.constraint(equalTo: mapsContainerView.topAnchor).isActive = true
         mapView.bottomAnchor.constraint(equalTo: mapsContainerView.bottomAnchor).isActive = true
         mapView.rightAnchor.constraint(equalTo: mapsContainerView.rightAnchor).isActive = true
         mapView.leftAnchor.constraint(equalTo: mapsContainerView.leftAnchor).isActive = true
+        cancelBtn.isHidden = true
 
         viewModel.statusPublishRelay.do(onNext: { _ in
             self.statusTitleLbl.isHidden = false
@@ -60,17 +61,18 @@ class MapsViewController: UIViewController {
                 }
                 alertViewController.addAction(okAction)
                 self.present(alertViewController, animated: true)
-                self.enableStartBtn()
+                self.startBtn.isHidden = false
             case .inVehicle:
-                break
+                self.cancelBtn.disableButton()
             case .waitingForPickup:
-                break
+                self.cancelBtn.isHidden = false
+                self.cancelBtn.enableButton()
                 
             }
         }).disposed(by: self.disposeBag)
     }
     
-   
+    
     
     func createCarMarker(lat: Double, lng: Double) {
         marker.position = CLLocationCoordinate2D(latitude: lat, longitude: lng)
@@ -83,18 +85,19 @@ class MapsViewController: UIViewController {
     }
     
     @IBAction func startPressed(_ sender: UIButton) {
-        disableStartBtn()
+        self.startBtn.isHidden = true
         viewModel.startMonitoringForLocation()
     }
     
-    func disableStartBtn() {
-        self.startBtn.isUserInteractionEnabled = false
-        self.startBtn.backgroundColor = UIColor.gray
+    @IBAction func cancelPressed(_ sender: UIButton) {
+        let camera = GMSCameraPosition.camera(withLatitude: 52.519061, longitude: 13.426789, zoom: 12.0)
+        mapView.camera = camera
+        mapView.clear()
+        viewModel.disconnect()
+        startBtn.isHidden = false
+        cancelBtn.isHidden = true
+        
     }
     
-    func enableStartBtn() {
-        self.startBtn.isUserInteractionEnabled = true
-        self.startBtn.backgroundColor = UIColor.black
-    }
 }
 
